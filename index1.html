@@ -1,0 +1,106 @@
+"use client";
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { HeartPulse, Mail, ArrowUpCircle, Download } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
+
+export default function Footer() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleVisibility = () => {
+    if (window.pageYOffset > 300) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  const handleSaveAsHtml = () => {
+    const pageHtml = document.documentElement.outerHTML;
+    const blob = new Blob([pageHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'daejeon-wellness-navigator.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', toggleVisibility);
+    return () => {
+      window.removeEventListener('scroll', toggleVisibility);
+    };
+  }, []);
+
+  return (
+    <footer className="bg-muted text-muted-foreground">
+      <div className="container mx-auto grid grid-cols-1 gap-8 px-4 py-12 md:grid-cols-4 md:px-6">
+        <div className="flex flex-col gap-4">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold text-primary">
+            <HeartPulse className="h-6 w-6" />
+            <span>대전 웰니스 네비게이터</span>
+          </Link>
+          <p className="text-sm">
+            AI 기반 맞춤형 건강 길잡이. 당신의 건강한 삶을 위한 첫걸음.
+          </p>
+        </div>
+        <div>
+          <h3 className="mb-4 text-base font-semibold text-foreground">바로가기</h3>
+          <ul className="space-y-2">
+            <li><Link href="#problem" className="text-sm hover:text-primary">문제점</Link></li>
+            <li><Link href="#solution" className="text-sm hover:text-primary">해결책</Link></li>
+            <li><Link href="#services" className="text-sm hover:text-primary">서비스</Link></li>
+            <li><Link href="#faq" className="text-sm hover:text-primary">FAQ</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="mb-4 text-base font-semibold text-foreground">연락처</h3>
+          <ul className="space-y-2">
+            <li className="flex items-center gap-2 text-sm">
+              <Mail className="h-4 w-4" />
+              <a href="mailto:contact@wellness-navigator.kr" className="hover:text-primary">
+                contact@wellness-navigator.kr
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="mb-4 text-base font-semibold text-foreground">기타</h3>
+          <Button onClick={handleSaveAsHtml} variant="outline" size="sm">
+            <Download className="mr-2 h-4 w-4" />
+            HTML로 저장
+          </Button>
+        </div>
+      </div>
+      <div className="border-t border-border">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-2 px-4 py-4 sm:flex-row md:px-6">
+          <p className="text-xs">
+            © {new Date().getFullYear()} 대전 웰니스 네비게이터. All rights reserved.
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={scrollToTop}
+        className={cn(
+          'fixed bottom-5 right-5 z-50 p-2 rounded-full bg-primary/80 text-primary-foreground shadow-lg transition-opacity duration-300 hover:bg-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+          isVisible ? 'opacity-100' : 'opacity-0'
+        )}
+        aria-label="맨 위로"
+      >
+        <ArrowUpCircle className="h-6 w-6" />
+      </button>
+    </footer>
+  );
+}
